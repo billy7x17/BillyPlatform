@@ -1,0 +1,159 @@
+package com.functions.impl;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.log4j.Logger;
+
+import com.Utils.Constants.event;
+import com.Utils.Constants.msg_type;
+import com.fields.Item;
+import com.fields.RequestMsg;
+import com.fields.ResponseMsg;
+import com.functions.FirstVictory;
+import com.functions.Handler;
+import com.functions.News;
+import com.functions.WeatherQuery;
+import com.test.MysqlJdbc;
+
+public class HandlerImpl implements Handler
+{
+	static Logger logger = Logger.getLogger(WeatherQuery.class.getName());
+
+	private static final FirstVictory fv = new FirstVictory();
+
+	private static final WeatherQuery weather = new WeatherQuery();
+
+	/**
+	 * 接收文本信息
+	 * 
+	 * @throws IOException
+	 */
+
+	public ResponseMsg processTextTypeMsg(RequestMsg msg) throws IOException
+	{
+
+		ResponseMsg response = new ResponseMsg();
+		String content;
+		if(msg.getContent().equals("0") || msg.getContent().equals("?")
+				|| msg.getContent().equals("help"))
+		{
+			content = "找向导请输入: 0\n查询天气请输入天数(0~4): 城市汉语名称+天气:\n(例如：0:北京天气     =>查询北京当日天气\n 1:洛杉矶天气   =>查询洛杉矶明日天气\n2: 沈阳天气   =>查询沈阳后天天气 等) \n查看最新资讯请输入: 2";
+			response.setContent(content);
+			response.setMsgType(msg_type.text);
+		}
+		else if(pattern(msg.getContent()))
+		{
+			response.setContent(weather.weatherQuery(msg.getContent()
+					.substring(2 , msg.getContent().length() - 2) , Integer
+					.valueOf(msg.getContent().substring(0 , 1))));
+			response.setMsgType(msg_type.text);
+		}
+		else if('2' == msg.getContent().charAt(0))
+		{
+			List<Item> list = new News().showNews();
+			response.setArticleCount(list.size());
+			response.setArticles(list);
+			response.setMsgType(msg_type.news);
+
+			System.out.println(list.get(0).getTitle());
+			System.out.println(list.get(1).getTitle());
+			System.out.println(list.get(2).getTitle());
+		}
+		// test
+		else if("99".equals(msg.getContent()))
+		{
+			MysqlJdbc test = new MysqlJdbc();
+			response.setContent(test.mysqlTest());
+			response.setMsgType(msg_type.text);
+		}
+		else
+		{
+			response.setContent("要好好看向导哦！找向导请打0");
+			response.setMsgType(msg_type.text);
+		}
+		response.setFuncFlag(0);
+		return response;
+	}
+
+	/**
+	 * 事件： 公众平台暂时只支持 关注和取消关注
+	 */
+
+	public ResponseMsg processEventTypeMsg(RequestMsg msg)
+	{
+		ResponseMsg response = new ResponseMsg();
+		String content = null;
+		System.out.println(msg.getEvent());
+		if(msg.getEvent() == event.subscribe)
+		{
+			content = "欢迎您关注Billy'sPlatform,嘿嘿~。\n找向导先生请输入‘0’! \n本平台正在建设中，如果您有什么好的建议，请直接回复我哦!\n小黑会好好斟酌采纳的!";
+		}
+		else if(msg.getEvent() == event.unsubscribe)
+		{
+			System.out.println("退订了");
+		}
+		else
+		{
+			content = "收到事件信息 event:" + msg.getEvent();
+		}
+		System.out.println("content:" + content);
+		response.setContent(content);
+		response.setMsgType(msg_type.text);
+		response.setFuncFlag(0);
+		return response;
+	}
+
+	public ResponseMsg processImageTypeMsg(RequestMsg msg)
+	{
+		ResponseMsg response = new ResponseMsg();
+		response.setContent("收到图片信息：picurl:" + msg.getPicUrl());
+		response.setMsgType(msg_type.text);
+		response.setFuncFlag(0);
+		return response;
+	}
+
+	public ResponseMsg processLinkTypeMsg(RequestMsg msg)
+	{
+		ResponseMsg response = new ResponseMsg();
+		response.setContent("收到链接信息：title:" + msg.getTitle() + "  desc:"
+				+ msg.getDescription() + " url:" + msg.getUrl());
+		response.setMsgType(msg_type.text);
+		response.setFuncFlag(0);
+		return response;
+	}
+
+	public ResponseMsg processLocationTypeMsg(RequestMsg msg)
+	{
+		ResponseMsg response = new ResponseMsg();
+		response.setContent("收到位置信息：x:" + msg.getLocation_X() + "  y:"
+				+ msg.getLocation_Y());
+		response.setMsgType(msg_type.text);
+		response.setFuncFlag(0);
+		return response;
+	}
+
+	public ResponseMsg processVoiceTypeMsg(RequestMsg msg)
+	{
+		ResponseMsg response = new ResponseMsg();
+		response.setContent("收到语音信息：voiceurl:" + msg.getMediaId());
+		response.setMsgType(msg_type.text);
+		response.setFuncFlag(0);
+		return response;
+	}
+
+	private static boolean pattern(String msg)
+	{
+		Pattern pattern = Pattern.compile("^[0-4]:[\u4e00-\u9fa5]+天气");
+
+		Matcher m = pattern.matcher(msg);
+
+		return m.find();
+	}
+
+}
