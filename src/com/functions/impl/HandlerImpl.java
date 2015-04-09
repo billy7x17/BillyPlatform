@@ -1,8 +1,5 @@
 package com.functions.impl;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -16,6 +13,7 @@ import com.fields.ResponseMsg;
 import com.functions.FirstVictory;
 import com.functions.Handler;
 import com.functions.News;
+import com.functions.TimePlus;
 import com.functions.Translate;
 import com.functions.WeatherQuery;
 import com.test.MysqlJdbc;
@@ -25,6 +23,10 @@ public class HandlerImpl implements Handler
 	private static final FirstVictory fv = new FirstVictory();
 
 	private static final WeatherQuery weather = new WeatherQuery();
+
+	private final String weatherPattern = "^[0-4]:[\u4e00-\u9fa5]+天气";
+
+	private final String timePlusPattern = "^((([1-9]{1})|([0-1][0-9])|([1-2][0-3])))([0-5][0-9])( )*[-+]{1}( )*((([1-9]{1})|([0-1][0-9])|([1-2][0-3])))([0-5][0-9])$";
 
 	/**
 	 * 接收文本信息
@@ -45,12 +47,21 @@ public class HandlerImpl implements Handler
 			response.setContent(content);
 			response.setMsgType(msg_type.text);
 		}
-		else if(pattern(msg.getContent()))
+		else if(pattern(msg.getContent() , weatherPattern))
 		{
 			response.setContent(weather.weatherQuery(msg.getContent()
 					.substring(2 , msg.getContent().length() - 2) , Integer
 					.valueOf(msg.getContent().substring(0 , 1))));
 			response.setMsgType(msg_type.text);
+		}
+		else if(pattern(msg.getContent() , timePlusPattern))
+		{
+			String[] timeArr = msg.getContent().split("-|+");
+			TimePlus bean = new TimePlus();
+			if(-1 != msg.getContent().indexOf('+'))
+				bean.plus(timeArr[0].trim() , timeArr[1].trim());
+			else
+				bean.minus(timeArr[0].trim() , timeArr[1].trim());
 		}
 		else if('2' == msg.getContent().charAt(0))
 		{
@@ -70,7 +81,9 @@ public class HandlerImpl implements Handler
 			response.setContent(test.mysqlTest());
 			response.setMsgType(msg_type.text);
 		}
-		else if (msg.getContent().length() > 2 && "翻译".equals(msg.getContent().substring(0 , 2))) {
+		else if(msg.getContent().length() > 2
+				&& "翻译".equals(msg.getContent().substring(0 , 2)))
+		{
 			Translate t = new Translate();
 			response.setContent(t.getText(msg.getContent().substring(2)));
 			response.setMsgType(msg_type.text);
@@ -150,9 +163,9 @@ public class HandlerImpl implements Handler
 		return response;
 	}
 
-	private static boolean pattern(String msg)
+	private static boolean pattern(String msg , String reg)
 	{
-		Pattern pattern = Pattern.compile("^[0-4]:[\u4e00-\u9fa5]+天气");
+		Pattern pattern = Pattern.compile(reg);
 
 		Matcher m = pattern.matcher(msg);
 
