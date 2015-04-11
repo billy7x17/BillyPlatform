@@ -1,10 +1,7 @@
 package com.functions;
 
 import java.net.URLEncoder;
-
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-
+import net.sf.json.JSONObject;
 import com.Utils.GetURLData;
 import com.fields.Youdao;
 
@@ -66,13 +63,13 @@ public class Translate
 		{
 			youdao = new Youdao();
 
-			a = new JSONObject(jsonStr);
+			a = JSONObject.fromObject(jsonStr);
 
 			youdao.setErrorCode(a.getInt("errorCode"));
 
 			youdao.setTranslation(a.getString("translation"));
 		}
-		catch(JSONException e)
+		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
