@@ -39,11 +39,12 @@ public class HandlerImpl implements Handler
 
 		ResponseMsg response = new ResponseMsg();
 		String content;
-		if(msg.getContent().equals("0") || msg.getContent().equals("?")
-				|| msg.getContent().equals("help"))
+		if(pattern(msg.getContent() , "^0$" , "^\\?$" , "^？$" , "^help$" ,
+				"^帮助$"))
 		{
-			content = "找向导请输入: 0\n查询天气请输入天数(0~4): 城市汉语名称+天气:\n(例如：0:北京天气     =>查询北京当日天气\n 1:洛杉矶天气   =>查询洛杉矶明日天气\n2: 沈阳天气   =>查询沈阳后天天气 等) \n查看最新资讯请输入: 2"
-					+ "\n中英翻译请输入：翻译 + 要翻译的语句\n例如 翻译 我爱中国";
+			content = "找向导请输入: 0\n查询天气请输入天数(0~4): 城市汉语名称+天气:\n(例如：0:北京天气     =>查询北京当日天气\n 1:洛杉矶天气   =>查询洛杉矶明日天气\n2: 沈阳天气   =>查询沈阳后天天气 等)"
+					+ "\n中英翻译请输入：翻译 + 要翻译的语句\n例如 翻译 我爱中国"
+					+ "\n计算时间请直接输入算式  如： 1846 + 1021    或 357 - 1120";
 			response.setContent(content);
 			response.setMsgType(msg_type.text);
 		}
@@ -56,24 +57,27 @@ public class HandlerImpl implements Handler
 		}
 		else if(pattern(msg.getContent() , timePlusPattern))
 		{
-			String[] timeArr = msg.getContent().split("-|+");
+			String[] timeArr = msg.getContent().split("-|\\+");
 			TimePlus bean = new TimePlus();
+			String timeResult = null;
 			if(-1 != msg.getContent().indexOf('+'))
-				bean.plus(timeArr[0].trim() , timeArr[1].trim());
+				timeResult = bean.plus(timeArr[0].trim() , timeArr[1].trim());
 			else
-				bean.minus(timeArr[0].trim() , timeArr[1].trim());
-		}
-		else if('2' == msg.getContent().charAt(0))
-		{
-			List<Item> list = new News().showNews();
-			response.setArticleCount(list.size());
-			response.setArticles(list);
-			response.setMsgType(msg_type.news);
+				timeResult = bean.minus(timeArr[0].trim() , timeArr[1].trim());
 
-			System.out.println(list.get(0).getTitle());
-			System.out.println(list.get(1).getTitle());
-			System.out.println(list.get(2).getTitle());
+			response.setContent(timeResult);
+			response.setMsgType(msg_type.text);
 		}
+		/*最新资讯功能    -----  不要了   不能保持一直最新。。*/
+		/*
+		 * else if('2' == msg.getContent().charAt(0)) { List<Item> list = new
+		 * News().showNews(); response.setArticleCount(list.size());
+		 * response.setArticles(list); response.setMsgType(msg_type.news);
+		 * 
+		 * System.out.println(list.get(0).getTitle());
+		 * System.out.println(list.get(1).getTitle());
+		 * System.out.println(list.get(2).getTitle()); }
+		 */
 		// test
 		else if("99".equals(msg.getContent()))
 		{
@@ -163,13 +167,32 @@ public class HandlerImpl implements Handler
 		return response;
 	}
 
-	private static boolean pattern(String msg , String reg)
+	/**
+	 * 消息验证方法
+	 * 
+	 * @param msg
+	 *            消息
+	 * @param reg
+	 *            验证的正则表达式
+	 * @return 验证成功与否的boolean值
+	 */
+	private static boolean pattern(String msg , String... regs)
 	{
-		Pattern pattern = Pattern.compile(reg);
+		boolean flag = false;
 
-		Matcher m = pattern.matcher(msg);
+		for (int i = 0; i < regs.length; i++)
+		{
+			Pattern pattern = Pattern.compile(regs[i]);
 
-		return m.find();
+			Matcher m = pattern.matcher(msg.trim());
+
+			if(m.find())
+			{
+				flag = true;
+				break;
+			}
+		}
+
+		return flag;
 	}
-
 }
