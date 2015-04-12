@@ -13,6 +13,7 @@ import com.fields.ResponseMsg;
 import com.functions.FirstVictory;
 import com.functions.Handler;
 import com.functions.News;
+import com.functions.Robot;
 import com.functions.TimePlus;
 import com.functions.Translate;
 import com.functions.WeatherQuery;
@@ -68,7 +69,7 @@ public class HandlerImpl implements Handler
 			response.setContent(timeResult);
 			response.setMsgType(msg_type.text);
 		}
-		/*最新资讯功能    -----  不要了   不能保持一直最新。。*/
+		/* 最新资讯功能 ----- 不要了 不能保持一直最新。。 */
 		/*
 		 * else if('2' == msg.getContent().charAt(0)) { List<Item> list = new
 		 * News().showNews(); response.setArticleCount(list.size());
@@ -94,7 +95,10 @@ public class HandlerImpl implements Handler
 		}
 		else
 		{
-			response.setContent("要好好看向导哦！找向导请打0");
+			// response.setContent("要好好看向导哦！找向导请打0");
+			Robot bot = new Robot();
+			String result = bot.chat(msg.getContent());
+			response.setContent(result);
 			response.setMsgType(msg_type.text);
 		}
 		response.setFuncFlag(0);
