@@ -1,19 +1,10 @@
 package com.functions;
 
-import static com.Utils.Constants.ErrorMsg;
-import static com.Utils.Constants.billy;
-import static com.Utils.Constants.QQQ;
-import static com.Utils.Constants.result;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import com.fields.RequestMsg;
-import com.fields.ResponseMsg;
 
 public class FirstVictory
 {
-	private static Map<String , Long> FV;
+	// private static Map<String, Long> FV;
 
 	public String setFVtime(RequestMsg reqMsg)
 	{

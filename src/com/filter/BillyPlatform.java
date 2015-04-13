@@ -3,18 +3,15 @@ package com.filter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import com.Utils.SHA1;
 import com.Utils.XMLUtil;
 import com.fields.RequestMsg;
 import com.fields.ResponseMsg;
 import com.functions.Choices;
-import com.functions.WeatherQuery;
 
 public class BillyPlatform extends HttpServlet
 {
@@ -93,23 +90,9 @@ public class BillyPlatform extends HttpServlet
 	 * @param str
 	 * @return
 	 */
-	private String removeHeadZero(String str)
-	{
-		if(str.startsWith("0"))
-		{
-			str = str.substring(1);
-			if(str.startsWith("0"))
-			{
-				return removeHeadZero(str);
-			}
-			else
-			{
-				return str;
-			}
-		}
-		else
-		{
-			return str;
-		}
-	}
+	/*
+	 * private String removeHeadZero(String str) { if(str.startsWith("0")) { str
+	 * = str.substring(1); if(str.startsWith("0")) { return removeHeadZero(str);
+	 * } else { return str; } } else { return str; } }
+	 */
 }

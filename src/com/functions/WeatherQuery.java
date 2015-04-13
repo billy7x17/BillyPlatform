@@ -4,12 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URLEncoder;
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.util.Date;
-
 import com.Utils.GetURLData;
-import com.fields.Profiles;
 import com.fields.Weather;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -17,11 +13,10 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 public class WeatherQuery
 {
 
-
 	public String weatherQuery(String cityName , int day) throws IOException
 	{
 		long curTime = new Date().getTime();
-		
+
 		String city = null;
 
 		try
@@ -33,9 +28,9 @@ public class WeatherQuery
 			e.printStackTrace();
 		}
 
-		System.out.println("URL:http://php.weather.sina.com.cn/xml.php?city=" + city
-						+ "&password=DJOYnieT8234jlsK&day=" + day);
-		
+		System.out.println("URL:http://php.weather.sina.com.cn/xml.php?city="
+				+ city + "&password=DJOYnieT8234jlsK&day=" + day);
+
 		String string = GetURLData.stringSendGet(
 				"http://php.weather.sina.com.cn/xml.php?city=" + city
 						+ "&password=DJOYnieT8234jlsK&day=" + day , "");
@@ -47,8 +42,8 @@ public class WeatherQuery
 		string = string.replaceAll("<Profiles><Weather>" , "");
 		string = string.replaceAll("</Weather></Profiles>" , "</xml>");
 		string = string.replaceAll("(<!--)+[\\S\\s]+(-->)" , "");
-		string = string.substring(string.indexOf("<xml") , string
-				.lastIndexOf('>') + 1);
+		string = string.substring(string.indexOf("<xml") ,
+				string.lastIndexOf('>') + 1);
 
 		System.out.println(string);
 
@@ -91,9 +86,9 @@ public class WeatherQuery
 		}
 
 		long now = new Date().getTime();
-		
-		System.out.println("天气查询 占用了 " + (now - curTime) + " 毫秒时间");
-		
+
+		System.out.println("天气查询 占用了 " + ( now - curTime ) + " 毫秒时间");
+
 		return toXml(weather);
 	}
 
@@ -101,8 +96,8 @@ public class WeatherQuery
 	{
 		StringBuilder result = new StringBuilder();
 
-		result.append(weather.getCity()).append("天气预报").append(
-				weather.getSavedate_weather()).append("\n");
+		result.append(weather.getCity()).append("天气预报")
+				.append(weather.getSavedate_weather()).append("\n");
 
 		result.append("白天天气情况:").append(weather.getStatus1()).append("\n");
 

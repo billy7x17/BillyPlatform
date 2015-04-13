@@ -1,15 +1,10 @@
 package com.test;
 
 import java.io.IOException;
-import java.util.Date;
-
-import com.Utils.Constants.msg_type;
 import com.fields.Item;
 import com.fields.RequestMsg;
 import com.fields.ResponseMsg;
 import com.functions.Choices;
-import com.functions.Handler;
-import com.functions.impl.HandlerImpl;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
@@ -38,7 +33,6 @@ public class Test1
 		}
 		catch(IOException e1)
 		{
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 

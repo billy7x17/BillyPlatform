@@ -1,18 +1,13 @@
 package com.functions.impl;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import com.Utils.Constants.event;
 import com.Utils.Constants.msg_type;
-import com.fields.Item;
 import com.fields.RequestMsg;
 import com.fields.ResponseMsg;
-import com.functions.FirstVictory;
 import com.functions.Handler;
-import com.functions.News;
 import com.functions.Robot;
 import com.functions.TimePlus;
 import com.functions.Translate;
@@ -21,7 +16,7 @@ import com.test.MysqlJdbc;
 
 public class HandlerImpl implements Handler
 {
-	private static final FirstVictory fv = new FirstVictory();
+	// private static final FirstVictory fv = new FirstVictory();
 
 	private static final WeatherQuery weather = new WeatherQuery();
 
@@ -74,7 +69,6 @@ public class HandlerImpl implements Handler
 		 * else if('2' == msg.getContent().charAt(0)) { List<Item> list = new
 		 * News().showNews(); response.setArticleCount(list.size());
 		 * response.setArticles(list); response.setMsgType(msg_type.news);
-		 * 
 		 * System.out.println(list.get(0).getTitle());
 		 * System.out.println(list.get(1).getTitle());
 		 * System.out.println(list.get(2).getTitle()); }

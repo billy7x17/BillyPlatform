@@ -104,9 +104,7 @@ public class Robot
 	 */
 	private String decodeJson(StringBuffer sb)
 	{
-		
-		
-		
+
 		return null;
 	}
 }
