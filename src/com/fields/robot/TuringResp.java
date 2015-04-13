@@ -6,21 +6,11 @@ public class TuringResp implements Serializable
 {
 	private static final long serialVersionUID = -8666078998730789784L;
 
-	private String code;
+	private TuringRobotRespCode code;
 
 	private String text;
 
 	private String url;
-
-	public String getCode()
-	{
-		return code;
-	}
-
-	public void setCode(String code)
-	{
-		this.code = code;
-	}
 
 	public String getText()
 	{
@@ -42,4 +32,13 @@ public class TuringResp implements Serializable
 		this.url = url;
 	}
 
+	public TuringRobotRespCode getCode()
+	{
+		return code;
+	}
+
+	public void setCode(TuringRobotRespCode code)
+	{
+		this.code = code;
+	}
 }

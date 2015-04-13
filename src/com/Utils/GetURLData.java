@@ -3,8 +3,12 @@ package com.Utils;
 import java.io.*;
 import java.net.*;
 
+import org.apache.log4j.Logger;
+
 public class GetURLData
 {
+	private static Logger logger = Logger.getLogger(GetURLData.class);
+
 	public static String stringSendGet(String url , String param)
 	{
 		String result = "";
@@ -28,9 +32,7 @@ public class GetURLData
 		}
 		catch(Exception e)
 		{
-
-			System.out.println("与服务器连接发生异常错误:" + e.toString());
-			System.out.println("连接地址是:" + urlName);
+			logger.error("与服务器连接发生异常错误:" , e);
 		}
 		return result;
 	}

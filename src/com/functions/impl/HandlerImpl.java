@@ -3,6 +3,9 @@ package com.functions.impl;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.log4j.Logger;
+
 import com.Utils.Constants.event;
 import com.Utils.Constants.msg_type;
 import com.fields.RequestMsg;
@@ -16,7 +19,7 @@ import com.test.MysqlJdbc;
 
 public class HandlerImpl implements Handler
 {
-	// private static final FirstVictory fv = new FirstVictory();
+	private final Logger logger = Logger.getLogger(this.getClass());
 
 	private static final WeatherQuery weather = new WeatherQuery();
 
@@ -107,20 +110,20 @@ public class HandlerImpl implements Handler
 	{
 		ResponseMsg response = new ResponseMsg();
 		String content = null;
-		System.out.println(msg.getEvent());
+		logger.info(msg.getEvent());
 		if(msg.getEvent() == event.subscribe)
 		{
 			content = "欢迎您关注Billy'sPlatform,嘿嘿~。\n找向导先生请输入‘0’! \n本平台正在建设中，如果您有什么好的建议，请直接回复我哦!\n小黑会好好斟酌采纳的!";
 		}
 		else if(msg.getEvent() == event.unsubscribe)
 		{
-			System.out.println("退订了");
+			logger.info("退订了");
 		}
 		else
 		{
 			content = "收到事件信息 event:" + msg.getEvent();
 		}
-		System.out.println("content:" + content);
+		logger.info("content:" + content);
 		response.setContent(content);
 		response.setMsgType(msg_type.text);
 		response.setFuncFlag(0);

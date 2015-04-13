@@ -1,7 +1,11 @@
 package com.functions;
 
 import java.net.URLEncoder;
+
+import org.apache.log4j.Logger;
+
 import net.sf.json.JSONObject;
+
 import com.Utils.GetURLData;
 import com.fields.Youdao;
 
@@ -29,6 +33,8 @@ public class Translate
 	 * @param source
 	 * @return
 	 */
+
+	private final Logger logger = Logger.getLogger(this.getClass());
 
 	public String getText(String source)
 	{

@@ -3,10 +3,14 @@ package com.filter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
+
 import com.Utils.SHA1;
 import com.Utils.XMLUtil;
 import com.fields.RequestMsg;
@@ -15,11 +19,9 @@ import com.functions.Choices;
 
 public class BillyPlatform extends HttpServlet
 {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
+
+	private final Logger logger = Logger.getLogger(this.getClass());
 
 	private String TOKEN = "billy119";
 
@@ -78,7 +80,7 @@ public class BillyPlatform extends HttpServlet
 
 		long now = new Date().getTime();
 
-		System.out.println("经过服务器总共  占用了 " + ( now - curTime ) + " 毫秒时间");
+		logger.info("经过服务器总共  占用了 " + ( now - curTime ) + " 毫秒时间");
 
 		/* 输出 */
 		XMLUtil.Output(resp , respMsg);

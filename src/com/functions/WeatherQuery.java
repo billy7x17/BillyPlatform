@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URLEncoder;
 import java.util.Date;
+
+import org.apache.log4j.Logger;
+
 import com.Utils.GetURLData;
 import com.fields.Weather;
 import com.thoughtworks.xstream.XStream;
@@ -12,6 +15,8 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 
 public class WeatherQuery
 {
+
+	private final Logger logger = Logger.getLogger(this.getClass());
 
 	public String weatherQuery(String cityName , int day) throws IOException
 	{
@@ -28,14 +33,14 @@ public class WeatherQuery
 			e.printStackTrace();
 		}
 
-		System.out.println("URL:http://php.weather.sina.com.cn/xml.php?city="
-				+ city + "&password=DJOYnieT8234jlsK&day=" + day);
+		logger.info("URL:http://php.weather.sina.com.cn/xml.php?city=" + city
+				+ "&password=DJOYnieT8234jlsK&day=" + day);
 
 		String string = GetURLData.stringSendGet(
 				"http://php.weather.sina.com.cn/xml.php?city=" + city
 						+ "&password=DJOYnieT8234jlsK&day=" + day , "");
-		System.out.println(string);
-		System.out.println(string);
+		logger.info(string);
+		logger.info(string);
 
 		string = string.replaceAll(
 				"<\\?xml version=\"1.0\" encoding=\"UTF-8\"\\?>" , "<xml>");
@@ -45,7 +50,7 @@ public class WeatherQuery
 		string = string.substring(string.indexOf("<xml") ,
 				string.lastIndexOf('>') + 1);
 
-		System.out.println(string);
+		logger.info(string);
 
 		XStream a = new XStream(new DomDriver());
 
@@ -87,7 +92,7 @@ public class WeatherQuery
 
 		long now = new Date().getTime();
 
-		System.out.println("天气查询 占用了 " + ( now - curTime ) + " 毫秒时间");
+		logger.info("天气查询 占用了 " + ( now - curTime ) + " 毫秒时间");
 
 		return toXml(weather);
 	}

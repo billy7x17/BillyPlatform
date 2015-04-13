@@ -5,9 +5,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
+import org.apache.log4j.Logger;
+import net.sf.json.JSONObject;
 
 public class Robot
 {
+	private final Logger logger = Logger.getLogger(this.getClass());
 
 	private String key = "14d2afbc06b450929bae263e2c1bd0d9";
 
@@ -91,9 +94,10 @@ public class Robot
 		}
 		// 断开连接
 		connection.disconnect();
-		System.out.println(sb);
+		logger.info(sb);
 
-		return sb.toString();
+		return decodeJson(sb);
+
 	}
 
 	/**
@@ -105,6 +109,9 @@ public class Robot
 	private String decodeJson(StringBuffer sb)
 	{
 
-		return null;
+		JSONObject resp = JSONObject.fromObject(sb.toString());
+
+		return (String)resp.get("text");
+
 	}
 }
