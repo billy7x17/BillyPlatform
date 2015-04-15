@@ -39,7 +39,7 @@ public class XMLUtil
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			logger.error("返回XML数据时转化异常" , e);
 		}
 
 	}
@@ -72,7 +72,7 @@ public class XMLUtil
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			logger.error("微信的请求XML参数解码异常" , e);
 		}
 
 		logger.info(sb.toString());
