@@ -52,6 +52,17 @@ public class Weather
 	private String savedate_weather;// 天气预报日期
 	private String savedate_life; // 生活日期
 	private String savedate_zhishu; // 指数日期
+	private String udatetime;
+
+	public String getUdatetime()
+	{
+		return udatetime;
+	}
+
+	public void setUdatetime(String udatetime)
+	{
+		this.udatetime = udatetime;
+	}
 
 	public String getSsd()
 	{
