@@ -50,7 +50,8 @@ public class Translate
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			logger.error("待翻译的字符串解码异常" , e);
+			return "请输入中文字符或英文字母";
 		}
 
 		String url = "http://fanyi.youdao.com/openapi.do?keyfrom=BillyPlatform&key=218884037&type=data&doctype=json&version=1.1&q="
@@ -77,7 +78,7 @@ public class Translate
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			logger.error("获取错误吗时解码json异常" , e);
 		}
 
 		/* 错误码判定 */

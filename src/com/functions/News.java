@@ -6,10 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 import com.fields.Item;
 
 public class News
 {
+	private final Logger logger = Logger.getLogger(this.getClass());
+
 	private Properties p;
 
 	public List<Item> showNews()
@@ -23,7 +27,7 @@ public class News
 		}
 		catch(IOException e)
 		{
-			e.printStackTrace();
+			logger.error("新闻模块,解析配置文件异常" , e);
 		}
 
 		List<Item> list = new ArrayList<Item>();

@@ -30,7 +30,8 @@ public class WeatherQuery
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			logger.error("查询天气,城市名称解码异常" , e);
+			return "请输入正确的城市名称";
 		}
 
 		logger.info("URL:http://php.weather.sina.com.cn/xml.php?city=" + city
@@ -39,6 +40,7 @@ public class WeatherQuery
 		String string = GetURLData.stringSendGet(
 				"http://php.weather.sina.com.cn/xml.php?city=" + city
 						+ "&password=DJOYnieT8234jlsK&day=" + day , "");
+
 		logger.info(string);
 		logger.info(string);
 
@@ -76,7 +78,7 @@ public class WeatherQuery
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			logger.error("查询天气,读取流中的缓存异常" , e);
 		}
 		Weather weather = null;
 		try
@@ -85,7 +87,7 @@ public class WeatherQuery
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			logger.error("解析返回的xml数据异常" , e);
 
 			return "未找到您所输入的城市";
 		}

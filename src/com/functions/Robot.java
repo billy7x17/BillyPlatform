@@ -26,7 +26,8 @@ public class Robot
 		}
 		catch(UnsupportedEncodingException e)
 		{
-			e.printStackTrace();
+			logger.error("转码失败," , e);
+			return "请输入中文汉字或英文字母";
 		}
 		String getURL = tulingUrl + "key=" + APIKEY + "&info=" + INFO;
 		URL getUrl = null;
@@ -36,7 +37,8 @@ public class Robot
 		}
 		catch(MalformedURLException e)
 		{
-			e.printStackTrace();
+			logger.error("url格式错误" , e);
+			return "网络故障,请稍后再试";
 		}
 		HttpURLConnection connection = null;
 		try
@@ -45,7 +47,8 @@ public class Robot
 		}
 		catch(IOException e)
 		{
-			e.printStackTrace();
+			logger.error("开启连接失败" , e);
+			return "网络故障,请稍后再试";
 		}
 		try
 		{
@@ -53,7 +56,8 @@ public class Robot
 		}
 		catch(IOException e)
 		{
-			e.printStackTrace();
+			logger.error("与turing123.com之间的网络不通" , e);
+			return "网络故障,请稍后再试";
 		}
 
 		// 取得输入流，并使用Reader读取
@@ -65,11 +69,13 @@ public class Robot
 		}
 		catch(UnsupportedEncodingException e)
 		{
-			e.printStackTrace();
+			logger.error("返回的字符串不能解码为UTF-8" , e);
+			return "网络故障,请稍后再试";
 		}
 		catch(IOException e)
 		{
-			e.printStackTrace();
+			logger.error("IO流操作异常" , e);
+			return "网络故障,请稍后再试";
 		}
 		StringBuffer sb = new StringBuffer();
 		String line = "";
@@ -82,7 +88,8 @@ public class Robot
 		}
 		catch(IOException e)
 		{
-			e.printStackTrace();
+			logger.error("IO流操作异常" , e);
+			return "网络故障,请稍后再试";
 		}
 		try
 		{
@@ -90,7 +97,8 @@ public class Robot
 		}
 		catch(IOException e)
 		{
-			e.printStackTrace();
+			logger.error("IO流关闭异常" , e);
+			return "网络故障,请稍后再试";
 		}
 		// 断开连接
 		connection.disconnect();
