@@ -23,7 +23,7 @@ public class HandlerImpl implements Handler
 
 	private static final WeatherQuery weather = new WeatherQuery();
 
-	private final String weatherPattern = "^[0-4]:[\u4e00-\u9fa5]+天气";
+	private final String weatherPattern = "^[0-2][:：]{1}[\u4e00-\u9fa5]+天气";
 
 	private final String timePlusPattern = "^((([1-9]{1})|([0-1][0-9])|([1-2][0-3])))([0-5][0-9])( )*[-+]{1}( )*((([1-9]{1})|([0-1][0-9])|([1-2][0-3])))([0-5][0-9])$";
 
@@ -41,7 +41,7 @@ public class HandlerImpl implements Handler
 		if(pattern(msg.getContent() , "^0$" , "^\\?$" , "^？$" , "^help$" ,
 				"^帮助$"))
 		{
-			content = "找向导请输入: 0\n查询天气请输入天数(0~4): 城市汉语名称+天气:\n(例如：0:北京天气     =>查询北京当日天气\n 1:洛杉矶天气   =>查询洛杉矶明日天气\n2: 沈阳天气   =>查询沈阳后天天气 等)"
+			content = "找向导请输入: 0\n查询天气请输入天数(0~2): 城市汉语名称+天气:\n(例如：0:北京天气     =>查询北京当日天气\n 1:洛杉矶天气   =>查询洛杉矶明日天气\n2: 沈阳天气   =>查询沈阳后天天气 等)"
 					+ "\n中英翻译请输入：翻译 + 要翻译的语句\n例如 翻译 我爱中国"
 					+ "\n计算时间请直接输入算式  如： 1846 + 1021    或 357 - 1120";
 			response.setContent(content);
