@@ -2,6 +2,8 @@ package com.test;
 
 import java.sql.*;
 
+import com.sina.sae.util.SaeUserInfo;
+
 public class MysqlJdbc
 {
 	public String mysqlTest()
@@ -22,8 +24,8 @@ public class MysqlJdbc
 		try
 		{
 			connect = DriverManager.getConnection(
-					"jdbc:mysql://119.108.52.6:3306/billydata" , "root" ,
-					"admin");
+					"jdbc:mysql://w.rdc.sae.sina.com.cn:3307/app_billytest" ,
+					SaeUserInfo.getAccessKey() , SaeUserInfo.getSecretKey());
 		}
 		catch(SQLException e1)
 		{
@@ -35,7 +37,8 @@ public class MysqlJdbc
 
 			result += "Success connect Mysql server!\t";
 			Statement stmt = connect.createStatement();
-			ResultSet rs = stmt.executeQuery("select * from test");
+			ResultSet rs = stmt
+					.executeQuery("SELECT * FROM  `portal_goods_t` LIMIT 0 , 30");
 			while(rs.next())
 			{
 				result += rs.getString("name");
@@ -47,6 +50,7 @@ public class MysqlJdbc
 			e.printStackTrace();
 			result += "get data error!";
 		}
+
 		return result;
 	}
 }
