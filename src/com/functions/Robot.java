@@ -5,7 +5,19 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
+
+import com.Utils.Constants.msg_type;
+import com.fields.Item;
+import com.fields.ResponseMsg;
+import com.fields.robot.Link;
+import com.fields.robot.News;
+import com.fields.robot.RespCode;
+import com.fields.robot.News.NewsItem;
+
 import net.sf.json.JSONObject;
 
 public class Robot
@@ -56,7 +68,7 @@ public class Robot
 		}
 		catch(IOException e)
 		{
-			logger.error("与turing123.com之间的网络不通" , e);
+			logger.error("与tuling123.com之间的网络不通" , e);
 			return "网络故障,请稍后再试";
 		}
 
@@ -104,7 +116,9 @@ public class Robot
 		connection.disconnect();
 		logger.info(sb);
 
-		return decodeJson(sb);
+		decodeJson(sb);
+
+		return null;
 
 	}
 
@@ -114,12 +128,58 @@ public class Robot
 	 * @param sb
 	 * @return
 	 */
-	private String decodeJson(StringBuffer sb)
+	private ResponseMsg decodeJson(StringBuffer sb)
 	{
 
 		JSONObject resp = JSONObject.fromObject(sb.toString());
 
-		return (String)resp.get("text");
+		Integer respCode = resp.getInt("code");
 
+		RespCode code = RespCode.getRespEnum(respCode);
+
+		ResponseMsg respMsg = new ResponseMsg();
+
+		switch(code)
+		{
+			case text:
+				respMsg.setContent(resp.getString("text"));
+				respMsg.setMsgType(msg_type.text);
+				break;
+			case link:
+				Link link = (Link)JSONObject.toBean(resp , Link.class);
+				respMsg.setContent(link.getText() + "\n" + link.getUrl());
+				respMsg.setMsgType(msg_type.text);
+				break;
+			case news:
+				News news = (News)JSONObject.toBean(resp , News.class);
+				List<NewsItem> list = news.getList();
+				respMsg.setMsgType(msg_type.news);
+				respMsg.setArticleCount(list.size());
+				respMsg.setArticles(formatNews(list));
+				break;
+			default:
+				break;
+		}
+
+		return null;
+
+	}
+
+	private List<Item> formatNews(List<NewsItem> list)
+	{
+		List<Item> resultList = new ArrayList<Item>();
+		for (NewsItem it : list)
+		{
+			Item tmp = new Item();
+			tmp.setTitle(it.getArticle());
+			tmp.setUrl(it.getDetailurl());
+			tmp.setPicUrl(it.getIcon());
+			resultList.add(tmp);
+			/* 微信平台默认接受10条以内的图文消息,多了会无响应 */
+			if(resultList.size() == 10)
+				break;
+		}
+
+		return resultList;
 	}
 }
