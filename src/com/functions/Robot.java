@@ -6,7 +6,9 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -17,6 +19,8 @@ import com.fields.robot.Link;
 import com.fields.robot.News;
 import com.fields.robot.RespCode;
 import com.fields.robot.News.NewsItem;
+import com.fields.robot.Train.trainFlight;
+import com.fields.robot.Train;
 
 import net.sf.json.JSONObject;
 
@@ -28,7 +32,7 @@ public class Robot
 
 	private String tulingUrl = "http://www.tuling123.com/openapi/api?";
 
-	public String chat(String q)
+	public ResponseMsg chat(String q)
 	{
 		String APIKEY = key;
 		String INFO = null;
@@ -39,7 +43,7 @@ public class Robot
 		catch(UnsupportedEncodingException e)
 		{
 			logger.error("转码失败," , e);
-			return "请输入中文汉字或英文字母";
+			return simpleTextMsg("请输入中文汉字或英文字母");
 		}
 		String getURL = tulingUrl + "key=" + APIKEY + "&info=" + INFO;
 		URL getUrl = null;
@@ -50,7 +54,7 @@ public class Robot
 		catch(MalformedURLException e)
 		{
 			logger.error("url格式错误" , e);
-			return "网络故障,请稍后再试";
+			return simpleTextMsg("网络故障,请稍后再试");
 		}
 		HttpURLConnection connection = null;
 		try
@@ -60,7 +64,7 @@ public class Robot
 		catch(IOException e)
 		{
 			logger.error("开启连接失败" , e);
-			return "网络故障,请稍后再试";
+			return simpleTextMsg("网络故障,请稍后再试");
 		}
 		try
 		{
@@ -69,10 +73,10 @@ public class Robot
 		catch(IOException e)
 		{
 			logger.error("与tuling123.com之间的网络不通" , e);
-			return "网络故障,请稍后再试";
+			return simpleTextMsg("网络故障,请稍后再试");
 		}
 
-		// 取得输入流，并使用Reader读取
+		// 鍙栧緱杈撳叆娴侊紝骞朵娇鐢≧eader璇诲彇
 		BufferedReader reader = null;
 		try
 		{
@@ -82,12 +86,12 @@ public class Robot
 		catch(UnsupportedEncodingException e)
 		{
 			logger.error("返回的字符串不能解码为UTF-8" , e);
-			return "网络故障,请稍后再试";
+			return simpleTextMsg("网络故障,请稍后再试");
 		}
 		catch(IOException e)
 		{
 			logger.error("IO流操作异常" , e);
-			return "网络故障,请稍后再试";
+			return simpleTextMsg("网络故障,请稍后再试");
 		}
 		StringBuffer sb = new StringBuffer();
 		String line = "";
@@ -101,7 +105,7 @@ public class Robot
 		catch(IOException e)
 		{
 			logger.error("IO流操作异常" , e);
-			return "网络故障,请稍后再试";
+			return simpleTextMsg("网络故障,请稍后再试");
 		}
 		try
 		{
@@ -110,16 +114,13 @@ public class Robot
 		catch(IOException e)
 		{
 			logger.error("IO流关闭异常" , e);
-			return "网络故障,请稍后再试";
+			return simpleTextMsg("网络故障,请稍后再试");
 		}
-		// 断开连接
+		// 鏂紑杩炴帴
 		connection.disconnect();
 		logger.info(sb);
 
-		decodeJson(sb);
-
-		return null;
-
+		return decodeJson(sb);
 	}
 
 	/**
@@ -151,17 +152,34 @@ public class Robot
 				respMsg.setMsgType(msg_type.text);
 				break;
 			case news:
-				News news = (News)JSONObject.toBean(resp , News.class);
-				List<NewsItem> list = news.getList();
+				Map classMap = new HashMap();
+				classMap.put("list" , NewsItem.class);
+				News news = (News)JSONObject.toBean(resp , News.class ,
+						classMap);
+				List<NewsItem> newsList = news.getList();
 				respMsg.setMsgType(msg_type.news);
-				respMsg.setArticleCount(list.size());
-				respMsg.setArticles(formatNews(list));
+				respMsg.setArticleCount(newsList.size());
+				respMsg.setArticles(formatNews(newsList));
+				break;
+			case train:
+				Train train = (Train)JSONObject.toBean(resp , Train.class);
+				List<trainFlight> trainList = train.getList();
+				respMsg.setMsgType(msg_type.text);
+				StringBuffer content = new StringBuffer();
+				for (trainFlight it : trainList)
+					content.append(
+							"<a style=\"color:green;\" href=\"http://touch.qunar.com/h5/train/trainList?startStation=")
+							.append(it.getStart()).append("&endStation=")
+							.append(it.getTerminal()).append("\" />\n")
+							.append(it.getStarttime()).append("  -  ")
+							.append(it.getEndtime()).append("\n");
+				respMsg.setContent(content.toString());
 				break;
 			default:
 				break;
 		}
 
-		return null;
+		return respMsg;
 
 	}
 
@@ -181,5 +199,19 @@ public class Robot
 		}
 
 		return resultList;
+	}
+
+	/**
+	 * 回复简单文本消息
+	 * 
+	 * @param msg
+	 * @return
+	 */
+	private ResponseMsg simpleTextMsg(String msg)
+	{
+		ResponseMsg resp = new ResponseMsg();
+		resp.setMsgType(msg_type.text);
+		resp.setContent(msg);
+		return resp;
 	}
 }
