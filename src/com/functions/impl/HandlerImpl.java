@@ -95,8 +95,6 @@ public class HandlerImpl implements Handler
 			// response.setContent("要好好看向导哦！找向导请打0");
 			Robot bot = new Robot();
 			response = bot.chat(msg.getContent());
-			response.setContent(result);
-			response.setMsgType(msg_type.text);
 		}
 		response.setFuncFlag(0);
 		return response;
