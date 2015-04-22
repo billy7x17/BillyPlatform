@@ -15,6 +15,8 @@ import org.apache.log4j.Logger;
 import com.Utils.Constants.msg_type;
 import com.fields.Item;
 import com.fields.ResponseMsg;
+import com.fields.robot.Flight;
+import com.fields.robot.Flight.FlightItem;
 import com.fields.robot.Link;
 import com.fields.robot.News;
 import com.fields.robot.RespCode;
@@ -76,7 +78,6 @@ public class Robot
 			return simpleTextMsg("网络故障,请稍后再试");
 		}
 
-		// 鍙栧緱杈撳叆娴侊紝骞朵娇鐢≧eader璇诲彇
 		BufferedReader reader = null;
 		try
 		{
@@ -116,7 +117,7 @@ public class Robot
 			logger.error("IO流关闭异常" , e);
 			return simpleTextMsg("网络故障,请稍后再试");
 		}
-		// 鏂紑杩炴帴
+
 		connection.disconnect();
 		logger.info(sb);
 
@@ -140,6 +141,11 @@ public class Robot
 
 		ResponseMsg respMsg = new ResponseMsg();
 
+		@SuppressWarnings("rawtypes")
+		Map<String , Class> classMap = new HashMap<String , Class>();
+
+		StringBuffer content = null;
+
 		switch(code)
 		{
 			case text:
@@ -152,7 +158,6 @@ public class Robot
 				respMsg.setMsgType(msg_type.text);
 				break;
 			case news:
-				Map classMap = new HashMap();
 				classMap.put("list" , NewsItem.class);
 				News news = (News)JSONObject.toBean(resp , News.class ,
 						classMap);
@@ -162,15 +167,35 @@ public class Robot
 				respMsg.setArticles(formatNews(newsList));
 				break;
 			case train:
-				Train train = (Train)JSONObject.toBean(resp , Train.class);
+				classMap.put("list" , trainFlight.class);
+				Train train = (Train)JSONObject.toBean(resp , Train.class ,
+						classMap);
 				List<trainFlight> trainList = train.getList();
 				respMsg.setMsgType(msg_type.text);
-				StringBuffer content = new StringBuffer();
+				content = new StringBuffer();
 				for (trainFlight it : trainList)
 					content.append(
-							"<a style=\"color:green;\" href=\"http://touch.qunar.com/h5/train/trainList?startStation=")
+							"·<a style=\"color:green;\" href=\"http://touch.qunar.com/h5/train/trainList?startStation=")
 							.append(it.getStart()).append("&endStation=")
-							.append(it.getTerminal()).append("\" />\n")
+							.append(it.getTerminal()).append("\" >")
+							.append(it.getTrainnum()).append("</a>\n")
+							.append(it.getStarttime()).append("  -  ")
+							.append(it.getEndtime()).append("\n");
+				respMsg.setContent(content.toString());
+				break;
+			case flight:
+				classMap.put("list" , FlightItem.class);
+				Flight flight = (Flight)JSONObject.toBean(resp , Flight.class ,
+						classMap);
+				List<FlightItem> flightList = flight.getList();
+				respMsg.setMsgType(msg_type.text);
+				content = new StringBuffer();
+				for (FlightItem it : flightList)
+					content.append(
+							"·<a style=\"color:green;\" href=\"http://touch.qunar.com/h5/train/trainList?startStation=")
+							.append(it.getFlight()).append("&endStation=")
+							.append(it.getTerminal()).append("\" >")
+							.append(it.getTrainnum()).append("</a>\n")
 							.append(it.getStarttime()).append("  -  ")
 							.append(it.getEndtime()).append("\n");
 				respMsg.setContent(content.toString());
