@@ -10,7 +10,7 @@ public class News extends Text<News.NewsItem>
 {
 	private static final long serialVersionUID = 3732997917689729579L;
 
-	public class NewsItem
+	public static class NewsItem
 	{
 		/**
 		 * 标题

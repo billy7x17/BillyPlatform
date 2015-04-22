@@ -11,7 +11,7 @@ public class Train extends Text<Train.trainFlight>
 
 	private static final long serialVersionUID = -8564958822839098267L;
 
-	public final class trainFlight
+	public static class trainFlight
 	{
 		private String trainnum;
 
