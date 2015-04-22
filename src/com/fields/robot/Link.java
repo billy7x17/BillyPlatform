@@ -6,7 +6,7 @@ package com.fields.robot;
  * @author <a href="mailto:billy7x17@gmail.com">Billy </a>
  * @version 1.0.0 2015年4月16日 上午10:59:16
  */
-public class Link extends Text
+public class Link extends Text<Object>
 {
 	private static final long serialVersionUID = 760879505774817590L;
 
