@@ -19,6 +19,8 @@ import com.fields.robot.Flight;
 import com.fields.robot.Flight.FlightItem;
 import com.fields.robot.Link;
 import com.fields.robot.News;
+import com.fields.robot.Recipe;
+import com.fields.robot.Recipe.RecipeItem;
 import com.fields.robot.RespCode;
 import com.fields.robot.News.NewsItem;
 import com.fields.robot.Train.trainFlight;
@@ -33,6 +35,11 @@ public class Robot
 	private String key = "14d2afbc06b450929bae263e2c1bd0d9";
 
 	private String tulingUrl = "http://www.tuling123.com/openapi/api?";
+
+	/**
+	 * 微信最多支持10个图文信息
+	 */
+	private final int teletextMaxNum = 10;
 
 	public ResponseMsg chat(String q)
 	{
@@ -163,7 +170,8 @@ public class Robot
 						classMap);
 				List<NewsItem> newsList = news.getList();
 				respMsg.setMsgType(msg_type.news);
-				respMsg.setArticleCount(newsList.size());
+				respMsg.setArticleCount(newsList.size() > teletextMaxNum ? teletextMaxNum
+						: newsList.size());
 				respMsg.setArticles(formatNews(newsList));
 				break;
 			case train:
@@ -175,7 +183,7 @@ public class Robot
 				content = new StringBuffer();
 				for (trainFlight it : trainList)
 					content.append(
-							"·<a style=\"color:green;\" href=\"http://touch.qunar.com/h5/train/trainList?startStation=")
+							"·<a href=\"http://touch.qunar.com/h5/train/trainList?startStation=")
 							.append(it.getStart()).append("&endStation=")
 							.append(it.getTerminal()).append("\" >")
 							.append(it.getTrainnum()).append("</a>\n")
@@ -191,16 +199,26 @@ public class Robot
 				respMsg.setMsgType(msg_type.text);
 				content = new StringBuffer();
 				for (FlightItem it : flightList)
-					content.append(
-							"·<a style=\"color:green;\" href=\"http://touch.qunar.com/h5/train/trainList?startStation=")
-							.append(it.getFlight()).append("&endStation=")
-							.append(it.getTerminal()).append("\" >")
-							.append(it.getTrainnum()).append("</a>\n")
+					content.append("·").append(it.getFlight()).append("\n")
 							.append(it.getStarttime()).append("  -  ")
 							.append(it.getEndtime()).append("\n");
+				content.append("<a href='http://touch.qunar.com/h5/flight/'>查看更多详情</a>");
 				respMsg.setContent(content.toString());
 				break;
+			case recipe:
+				classMap.put("list" , RecipeItem.class);
+				Recipe recipe = (Recipe)JSONObject.toBean(resp , Recipe.class ,
+						classMap);
+				List<RecipeItem> recipeList = recipe.getList();
+				respMsg.setMsgType(msg_type.news);
+				respMsg.setArticleCount(recipeList.size() > teletextMaxNum ? teletextMaxNum
+						: recipeList.size());
+				respMsg.setArticles(formatRecipe(recipeList));
+				break;
 			default:
+				logger.info("没有识别\"机器人语言\"状态码:");
+				logger.info(resp.get("code"));
+				respMsg = simpleTextMsg("\"机器人语言\"状态码转码失败!");
 				break;
 		}
 
@@ -208,6 +226,13 @@ public class Robot
 
 	}
 
+	/**
+	 * 
+	 * formatNews 新闻 -> 图文信息
+	 * 
+	 * @param 新闻list
+	 * @return 图文信息的articleList
+	 */
 	private List<Item> formatNews(List<NewsItem> list)
 	{
 		List<Item> resultList = new ArrayList<Item>();
@@ -219,7 +244,35 @@ public class Robot
 			tmp.setPicUrl(it.getIcon());
 			resultList.add(tmp);
 			/* 微信平台默认接受10条以内的图文消息,多了会无响应 */
-			if(resultList.size() == 10)
+			if(resultList.size() == teletextMaxNum)
+				break;
+		}
+
+		return resultList;
+	}
+
+	/**
+	 * 
+	 * formatRecipe 菜谱等 -> 图文信息
+	 * 
+	 * @param list
+	 *            菜谱list
+	 * @return 图文信息的articleList
+	 */
+	private List<Item> formatRecipe(List<RecipeItem> list)
+	{
+		List<Item> resultList = new ArrayList<Item>();
+
+		for (RecipeItem it : list)
+		{
+			Item tmp = new Item();
+			tmp.setTitle(it.getName());
+			tmp.setUrl(it.getDetailurl());
+			tmp.setPicUrl(it.getIcon());
+			tmp.setDescription(it.getInfo());
+			resultList.add(tmp);
+			/* 微信平台默认接受10条以内的图文消息,多了会无响应 */
+			if(resultList.size() == teletextMaxNum)
 				break;
 		}
 
