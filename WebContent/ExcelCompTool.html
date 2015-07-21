@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>4MyHoney~</title>
+</head>
+<body>
+	<textarea rows="" cols="" id="text1" draggable="false"></textarea>
+	<textarea rows="" cols="" id="text2" draggable="false"></textarea>
+	<button onclick="compare()">对比</button>
+	<table>
+		<tr>
+			<th></th>
+			<th>左侧</th>
+			<th>右侧</th>
+		</tr>
+	</table>
+	<script type="text/javascript">
+		var compare = function(){
+			var leftArea = document.getElementById('text1');
+			var rightArea = document.getElementById('text2');
+			var leftArray = leftArea.value.split(' ');
+			var rightArray = rightArea.value.split(' ');
+			console.log(leftArray);
+			console.log(rightArray);
+		};
+	</script>
+</body>
+</html>
